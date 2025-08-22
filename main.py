@@ -1,8 +1,14 @@
+import os
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
+print(os.getenv("DISCORD_TOKEN")) 
 
 intents = discord.Intents.default()
-intents.message_content = True
+intents.message_content = True  # Message Content Intent をONにした場合
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 payments = {}  # {user_id: amount}
@@ -58,4 +64,4 @@ async def reset(ctx):
     payments.clear()
     await ctx.send("支払い記録をリセットしました。")
 
-bot.run("YOUR_BOT_TOKEN")
+bot.run(TOKEN)
