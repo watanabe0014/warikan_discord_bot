@@ -1,11 +1,15 @@
+import json
 import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import payments
+import users
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 print(os.getenv("DISCORD_TOKEN")) 
+payments.init_db()
 
 intents = discord.Intents.default()
 intents.message_content = True  # Message Content Intent をONにした場合
@@ -13,10 +17,17 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 payments = {}  # {user_id: amount}
 
+
+### 2025/09/01 guild_idをuser_idで代用するように修正予定
+
 @bot.command()
-async def pay(ctx, member: discord.Member, amount: int, *, reason=""):
-    payments[member.id] = payments.get(member.id, 0) + amount
-    await ctx.send(f"{member.display_name} が {amount}円 を支払いました（{reason}）")
+async def test(ctx):
+    print(ctx.author.id)
+
+@bot.command()
+async def pay(ctx, amount: int, reason=""):
+    payments.add_payment(str(ctx.guild.id), str(ctx.author.id), amount, reason)
+    await ctx.send(f"{ctx.author.mention} が {amount}円 を支払いました（{reason}）")
 
 @bot.command()
 async def warikan(ctx):
